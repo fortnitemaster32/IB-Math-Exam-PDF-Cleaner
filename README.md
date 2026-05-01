@@ -12,7 +12,7 @@ Strips cover pages, instructions, and blank "do not write" pages from IB Math ex
 
 ```bash
 # 1. Clone and set up
-git clone <repo-url>
+git clone https://github.com/fortnitemaster32/IB-Math-Exam-PDF-Cleaner.git
 cd ib-math-exam-cleaner
 
 # 2. Create virtual environment and install dependencies

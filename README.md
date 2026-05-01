@@ -1,6 +1,6 @@
 # IB Math Exam PDF Cleaner
 
-Strips cover pages, instructions, and blank "do not write" pages from IB Math exam PDFs. Adds a small label (subject, paper, TZ, level) to the first page for easy identification.
+Strips cover pages, instructions, and blank "do not write" pages from IB Math exam PDFs. Adds a small label (year, paper, TZ, level) to the first page for easy identification.
 
 ## Platform
 
@@ -20,8 +20,8 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install pypdf reportlab
 
-# 3. Drop your IB Math PDFs into this directory
-#    (e.g., Mathematics_analysis_and_approaches_paper_1_TZ1_HL.pdf)
+# 3. Drop your IB Math PDFs into this directory (or subdirectories)
+#    The script scans recursively through all subdirectories
 
 # 4. Run the script
 ./strip_intro.sh
@@ -33,35 +33,47 @@ Cleaned PDFs are saved to `output/` — originals are never modified.
 
 ## What It Does
 
-1. **Reads** all `*.pdf` files in the current directory
+1. **Recursively scans** the current directory and all subdirectories for `*.pdf` files
 2. **Skips** the first 2 pages (cover + instructions) — configurable
 3. **Detects** and removes blank "do not write" pages at the end of papers
-4. **Adds** a small label to the top-left of the first page (e.g., `AA Paper 1 TZ1 HL`)
-5. **Saves** cleaned PDFs to `output/` as `<original_name>_clean.pdf`
+4. **Skips** markschemes and non-exam PDFs automatically
+5. **Adds** a small label to the top-left of the first page (e.g., `2024 AA Paper 1 TZ1 HL`)
+6. **Saves** cleaned PDFs to `output/` with year-based filenames
 
 ---
 
 ## Compatibility
 
-### ✅ Works with these IB exam formats:
+### Supported subjects:
+
+| Subject | Code |
+|---|---|
+| Analysis & Approaches | AA |
+| Applications & Interpretation | AI |
+| Mathematical Studies | MS |
+| Further Mathematics | FM |
+
+### Supported fields:
 
 | Field | Supported Values |
 |---|---|
-| **Subject** | AA (Analysis & Approaches), AI (Applications & Interpretation) |
 | **Paper** | 1, 2, 3 (any number) |
 | **Timezone** | TZ1, TZ2, TZ3 (any number) |
 | **Level** | HL, SL |
+| **Language** | French, Spanish (when present in filename) |
 
 The script handles **any combination** of the above. For example:
 - `Mathematics_analysis_and_approaches_paper_2_TZ3_SL.pdf`
 - `Mathematics_applications_and_interpretation_paper_1_TZ2_HL.pdf`
-- `Mathematics_analysis_and_approaches_paper_3_TZ1_SL.pdf`
+- `Mathematics_analysis_and_approaches_paper_1__HL_French.pdf`
 
-### May not work with:
+### What gets skipped:
 
-- **Non-math IB subjects** — the filename must contain `analysis_and_approaches` or `applications_and_interpretation`
-- **Non-standard filenames** — if the filename doesn't follow the IB naming convention (paper/TZ/level embedded in the name), the label will show `?` for missing fields
-- **Exams without TZ** — some IB subjects don't use timezones; the label will show `TZ?` for these
+- **Markschemes** — any PDF with "markscheme" in the filename (case-insensitive)
+- **Non-exam PDFs** — files without "paper N" in the name
+- **Output directory** — cleaned PDFs are not re-processed
+
+---
 
 ### How question detection works:
 
@@ -83,14 +95,18 @@ A page is kept as a "question page" if it has **>100 characters of text** AND co
 |---|---|---|
 | `pages_to_remove` | `2` | Number of intro pages to skip from the start |
 
-**Output:** Cleaned PDFs are saved to `output/` with `_clean` appended to the filename. Original files are **never modified**.
+**Output:** Cleaned PDFs are saved to `output/` with year-based filenames:
 
 ```
 output/
-├── Mathematics_analysis_and_approaches_paper_1_TZ1_HL_clean.pdf
-├── Mathematics_analysis_and_approaches_paper_2_TZ2_SL_clean.pdf
+├── 2024_AA_Paper1_TZ1_HL_clean.pdf
+├── 2024_AA_Paper1_HL_French_clean.pdf
+├── 2021_AA_Paper2_TZ2_SL_clean.pdf
+├── 2019_MS_Paper1_TZ1_clean.pdf
 └── ...
 ```
+
+Original files are **never modified**.
 
 ### Example Run
 
@@ -98,11 +114,11 @@ output/
 $ rm -rf output && ./strip_intro.sh
  17 → 13 pages  Mathematics_analysis_and_approaches_paper_1_TZ1_HL.pdf
          (removed 2 blank page(s))
- 17 → 12 pages  Mathematics_analysis_and_approaches_paper_1_TZ2_HL.pdf
-         (removed 3 blank page(s))
- 17 → 14 pages  Mathematics_analysis_and_approaches_paper_2_TZ1_HL.pdf
-         (removed 1 blank page(s))
-  6 →  4 pages  Mathematics_analysis_and_approaches_paper_3_TZ1_HL.pdf
+ 17 → 12 pages  Mathematics/2024/Mathematics_analysis_and_approaches_paper_1__TZ1_HL.pdf
+         (removed 2 blank page(s))
+ 17 → 14 pages  Mathematics/2021/Mathematics_analysis_and_approaches_paper_2__TZ1_HL.pdf
+         (removed 2 blank page(s))
+  6 →  4 pages  Mathematics/2024/Mathematics_analysis_and_approaches_paper_3__TZ1_HL.pdf
 ```
 
 ---
@@ -130,15 +146,20 @@ After that, drop your IB Math PDFs into the directory and run `./strip_intro.sh`
 
 ### Adding Your PDFs
 
-Place your IB exam PDFs in the same directory as `strip_intro.sh`. They must follow the standard IB naming convention:
+Place your IB exam PDFs anywhere in the directory tree. The script scans recursively:
 
 ```
-Mathematics_analysis_and_approaches_paper_1_TZ1_HL.pdf
-Mathematics_analysis_and_approaches_paper_2_TZ2_SL.pdf
-Mathematics_applications_and_interpretation_paper_3_TZ1_HL.pdf
+./
+├── Mathematics_analysis_and_approaches_paper_1_TZ1_HL.pdf
+├── Mathematics/
+│   ├── 2024/
+│   │   ├── Mathematics_analysis_and_approaches_paper_1__TZ1_HL.pdf
+│   │   └── Mathematics_analysis_and_approaches_paper_1__HL_French.pdf
+│   └── 2021/
+│       └── Mathematics_analysis_and_approaches_paper_2__TZ1_HL.pdf
 ```
 
-The script processes **all** `*.pdf` files it finds in the current directory.
+Markschemes and non-exam PDFs are automatically skipped.
 
 ---
 

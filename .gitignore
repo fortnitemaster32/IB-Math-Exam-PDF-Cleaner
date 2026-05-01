@@ -1,0 +1,12 @@
+# Python virtual environment
+.venv/
+
+# Processed output
+output/
+
+# IB exam PDFs (copyrighted — don't commit these)
+*.pdf
+
+# OS junk
+.DS_Store
+Thumbs.db

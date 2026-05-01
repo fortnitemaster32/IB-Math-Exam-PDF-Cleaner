@@ -99,13 +99,13 @@ def is_question_page(reader, page_idx):
     tl = text.lower()
 
     chars = len(text.replace(" ", "").replace("\n", ""))
-    if chars < 100:
+    if chars < 30:
         return False
 
     has_question = bool(re.search(r'\b\d+\.\s', text)) or \
                    bool(re.search(r'\([abc]\)\s', tl)) or \
                    bool(re.search(r'\[Maximum mark', tl)) or \
-                   bool(re.search(r'\bfind|show|calculate|determine|evaluate|prove|solve|express|sketch|write|state|hence\b', tl))
+                   bool(re.search(r'\bfind|show|calculate|determine|evaluate|prove|solve|express|sketch|state|hence\b', tl))
 
     return has_question
 

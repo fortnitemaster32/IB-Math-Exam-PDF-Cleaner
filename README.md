@@ -77,11 +77,13 @@ The script handles **any combination** of the above. For example:
 
 ### How question detection works:
 
-A page is kept as a "question page" if it has **>100 characters of text** AND contains at least one of:
+A page is kept as a "question page" if it has **>30 characters of text** AND contains at least one of:
 - A numbered question (e.g., `1. `)
 - Sub-questions (e.g., `(a) `, `(b) `)
 - `[Maximum mark: X]`
-- Action verbs: `find`, `show`, `calculate`, `determine`, `evaluate`, `prove`, `solve`, `express`, `sketch`, `write`, `state`, `hence`
+- Action verbs: `find`, `show`, `calculate`, `determine`, `evaluate`, `prove`, `solve`, `express`, `sketch`, `state`, `hence`
+
+Pages containing only "do not write" text (without actual questions) are correctly skipped because they lack question indicators.
 
 ---
 

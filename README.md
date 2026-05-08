@@ -1,6 +1,6 @@
 # IB Math Exam PDF Cleaner
 
-Strips cover pages, instructions, and blank "do not write" pages from IB Math exam PDFs. Adds a small label (year, paper, TZ, level) to the first page for easy identification.
+Strips cover pages, instructions, and blank "do not write" pages from IB Math exam PDFs. Adds a small label (year, paper, TZ, level) to the first page for easy identification. Intended to save paper whilst printed.
 
 ## Platform
 
@@ -35,7 +35,7 @@ Cleaned PDFs are saved to `output/` — originals are never modified.
 
 1. **Recursively scans** the current directory and all subdirectories for `*.pdf` files
 2. **Skips** the first 2 pages (cover + instructions) — configurable
-3. **Detects** and removes blank "do not write" pages at the end of papers
+3. **Detects** and removes blank "do not write" pages 
 4. **Skips** markschemes and non-exam PDFs automatically
 5. **Adds** a small label to the top-left of the first page (e.g., `2024 AA Paper 1 TZ1 HL`)
 6. **Saves** cleaned PDFs to `output/` with year-based filenames
@@ -165,4 +165,4 @@ Markschemes and non-exam PDFs are automatically skipped.
 
 ---
 
-**Note:** This project was developed with the assistance of AI tools.
+**Note:** This project was developed with the assistance of AI tools. This script was tested with AA papers on Linux only, your milage may vary.

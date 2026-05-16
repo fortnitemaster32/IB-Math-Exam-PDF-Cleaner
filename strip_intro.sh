@@ -32,13 +32,18 @@ def parse_filename(filepath):
     base = path.stem
     parent_dirs = path.parts[:-1]
 
-    # Extract year from directory structure (e.g., "2021", "May 2022")
+    # Extract year from filename first, then directory structure (e.g., "2021", "May 2022")
+    # Note: _ is a \w char, so \b won't break on it — use (?:^|[^\d]) instead
     year = None
-    for d in parent_dirs:
-        m = re.search(r'\b(20\d{2})\b', d)
-        if m:
-            year = m.group(1)
-            break
+    m = re.search(r'(?:^|[^\d])(20\d{2})(?:$|[^\d])', base)
+    if m:
+        year = m.group(1)
+    else:
+        for d in parent_dirs:
+            m = re.search(r'\b(20\d{2})\b', d)
+            if m:
+                year = m.group(1)
+                break
 
     bl = base.lower()
     # Determine subject
@@ -123,10 +128,10 @@ def add_label_to_first_page(writer, label):
     buf = io.BytesIO()
     c = rl_canvas.Canvas(buf, pagesize=(pw, ph))
 
-    c.setFont("Helvetica", 9)
+    c.setFont("Helvetica", 11)
     c.setFillColorRGB(0.3, 0.3, 0.3)  # subtle grey
 
-    margin = 10
+    margin = 18
     c.drawString(margin, ph - margin, label)
 
     c.showPage()
